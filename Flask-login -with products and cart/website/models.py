@@ -16,12 +16,12 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
-    item = db.relationship('Item')
+    # item = db.relationship('Item')
 
-class Item(db.model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(length=30), nullable=False, unique=True)
-    price = db.Column(db.Integer(), nullable=False)
-    barcode = db.Column(db.String(length=12),nullable=False,unique =True)
-    desciption = db.Column(db.String(length=1024),nullable=False,unique =True)
+# class Item(db.model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(length=30), nullable=False, unique=True)
+#     price = db.Column(db.Integer(), nullable=False)
+#     barcode = db.Column(db.String(length=12),nullable=False,unique =True)
+#     desciption = db.Column(db.String(length=1024),nullable=False,unique =True)
     
