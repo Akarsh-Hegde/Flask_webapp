@@ -14,12 +14,13 @@ def admin_page():
         name = request.form.get('name')
         barcode = request.form.get('barcode')
         price = request.form.get('price')
-        
+        description = request.form.get('description')
+
         item = Item.query.filter_by(name=name).first()
         if item:
-            flash("Email already exists", category="error")
+            flash("Product already exists", category="error")
         else:
-            new_item = Item(name=name, barcode=barcode, price=price)
+            new_item = Item(name=name, barcode=barcode, price=price, description=description)
             db.session.add(new_item)
             db.session.commit()
             flash('Item Added!', category='success')
