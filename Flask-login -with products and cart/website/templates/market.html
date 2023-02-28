@@ -45,6 +45,7 @@
                         </div>
                     </div>
                 </div>
+                <form method="POST">
                 <!-- Purchase confirmation-->
                 <div class="modal fade" id="Modal-PurchaseConfirm-{{ item.id }}"
                      tabindex="-1"
@@ -65,13 +66,18 @@
                         {{ item.name }}
                         </div>
                             <div class="modal-footer">
+                                <input type="hidden" name="code" value="{{ item.id }}"/>
+                                <input type="hidden" name="name" value="{{ item.name }}"/>
+                                <input type="hidden" name="barcode" value="{{ item.barcode }}"/>
+                                <input type="hidden" name="price" value="{{ item.price }}"/>
+                                <input type="hidden" name="description" value="{{ item.description }}"/>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Purchase</button>
+                                <input type="submit" value="Purchase-Add to Cart" class="btn btn-primary"/>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                </form>
                     <td>{{ item.id }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.barcode }}</td>
@@ -84,5 +90,6 @@
             {% endfor %}
         </tbody>
     </table>
-  
+
 {% endblock %}
+
