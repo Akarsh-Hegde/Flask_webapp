@@ -15,9 +15,16 @@ def login():
         password = request.form.get('password')
 
         user = User.query.filter_by(email=email).first()
-        if user:
+        if user and email == "admin@gmail.com":
             if check_password_hash(user.password,password):
-                flash("Logged in successfully, you have a bright future!", category='success')
+                flash("Logged in successfully, Admin - you have a bright future!", category='success')
+                login_user(user, remember=True)
+                return redirect(url_for("views.home"))
+            else:
+                flash("Incorrect password, try again", category="error")
+        elif user:
+            if check_password_hash(user.password,password):
+                flash("Logged in successfully, comman man!", category='success')
                 login_user(user, remember=True)
                 return redirect(url_for("views.home"))
             else:

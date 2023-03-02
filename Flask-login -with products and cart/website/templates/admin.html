@@ -1,7 +1,10 @@
 {% extends "base.html" %} {% block title %}Sign Up{% endblock %} {% block
     content %}
     <form method="POST">
-      <h3 align="center">Admin-Add product</h3>
+      <h1 align="center">Admin</h1>
+    </br>
+      <h3 align="center">Add product</h3>
+
       <div class="form-group">
         <label for="name">Name</label>
         <input
@@ -29,7 +32,15 @@
           name="price"
           placeholder="Product Price"/>
       </div>
-        
+      <div class="form-group">
+        <label for="quantity">Quantity </label>
+        <input
+          type="number"
+          class="form-control"
+          id="quantity"
+          name="quantity"
+          placeholder="Add quantity"/>
+      </div>
       <div class="form-group">
         <div class="input-group-prepend">
             <span class="input-group-text">Description</span>
@@ -45,5 +56,78 @@
       <br />
       <button type="submit" class="btn btn-primary">Add Item</button>
     </form>
+</br>
+<h3 align="center">Market</h3>
+
+    <table class="table table-hover table-dark" name="Market">
+        <thead>
+            <tr>
+                <!-- Your Columns HERE -->
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Barcode</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <form method="POST">
+        <tbody>
+            {% for item in items %}
+
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.barcode }}</td>
+            <td>{{ item.price }}$</td>
+            <td>{{ item.quantity }}</td>
+            
+            <td>
+                <input type="hidden" name="id" value="{{ item.id }}"/>
+                <input type="submit" name="remove" value="Remove" class="btn btn-secondary"/>
+                <input type="submit" name="buy" value="Edit" class="btn btn-primary"/>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+</form>
+</br>
+</table>
+<h3 align="center">User-cart</h3>
+
+    <table class="table table-hover table-dark" name="User-cart">
+        <thead>
+            <tr>
+                <!-- Your Columns HERE -->
+                <th scope="col">User ID</th>
+                <th scope="col">User Email</th>
+                <th scope="col">Product ID</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <form method="POST">
+        <tbody>
+            {% for cart in carts %}
+            <td>{{ cart.owned_user.id }}</td>
+            <td>{{ cart.owned_user.email }}</td>
+
+            <td>{{ cart.id }}</td>
+            <td>{{ cart.name }}</td>
+            <td>{{ cart.price }}$</td>
+            <td>{{ cart.quantity }}</td>
+            
+            <td>
+                <input type="hidden" name="id" value="{{ cart.id }}"/>
+                <input type="submit" name="remove" value="Remove" class="btn btn-secondary"/>
+                <input type="submit" name="buy" value="Add" class="btn btn-primary"/>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+</form>
+</br>
+</table>
     {% endblock %}
     
