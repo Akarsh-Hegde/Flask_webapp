@@ -1,62 +1,66 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+
 from . import db
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
+from .models import User
+from passlib.hash import pbkdf2_sha256
+import uuid
+# from flask_login import login_required, logout_user, current_user, login_user
 
-auth  = Blueprint('auth', __name__)
+auth = Blueprint('auth', __name__)
 
-@auth.route('/login',methods=['GET','POST'])
-def login():
-    if request.method == "POST":
-        email = request.form.get('email')
-        password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
-        if user:
-
-            if check_password_hash(user.password,password):
-                flash('Logged in success!', category='success')
-                login_user(user, remember=True)
-                print(user.id)
-                return redirect(url_for("views.home"))
-            else:
-                flash('Incorrect password!', category='error')
-        else:
-            flash('Email not found!', category='error')
-        
-    return render_template("login.html", user=current_user)
-
-@auth.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('views.home'))
-
-@auth.route("/sign-up",methods=['GET','POST'])
+@auth.route("/sign-up", methods=['GET', 'POST'])
 def sign_up():
     if request.method == "POST":
-        email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email already exist!', category='error')
-        elif len(email) < 4:
-            flash("email must be more than 4 char!",category= "error")
-        elif len(first_name) < 1:
-            flash("first name must be more than 1 char!", category="error")
-        elif password1 != password2:
+        user = {
+        "_id": uuid.uuid4().hex,
+        "name": request.form.get('name'),
+        "email": request.form.get('email'),
+        "password1": request.form.get('password1'),
+        "password2": request.form.get('password2'),
+        }
+        if db.user.find_one({"email": user['email']}) is not None:
+            flash("Email already exists", category="error")
+        elif user['password1'] != user['password2']:
             flash("password dont match", category="error")
-        elif len(password1) < 7:
+        elif len(user['password1']) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))            
-            db.session.add(new_user)
-            db.session.commit()
+            print(user['name'])
+            user['password1'] = pbkdf2_sha256.encrypt(user['password1'])
+            db.user.update_one({"email": user['email']},{"$unset": {"password2": ""}})
+            user1 = db.user  # get the user collection in mongobd db
+            user1.insert_one(user)
 
             flash('Account created!', category='success')
-            # login_user(user, remember = True)
-            return redirect(url_for('auth.login'))
+            return redirect(url_for("auth.login"))
 
-    return render_template("sign_up.html", user=current_user)
+    return render_template("sign_up.html")
+
+
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user_login = db.user.find_one({"email": email}) 
+        if user_login:
+            if pbkdf2_sha256.verify(password, user_login['password1']):
+                flash("Logged in successfully!", category='success')
+                session["_id"] = user_login["_id"]
+                print(session["_id"])
+
+                return redirect(url_for("views.home"))
+            else:
+                flash("Incorrect password, try again", category="error")
+        else:
+            flash("email does not exist", category="error")
+        
+    return render_template("login.html")
+
+
+@auth.route("/logout")
+def logout():
+    # logout_user()
+    session.pop("_id", None)
+    return redirect(url_for("auth.login"))

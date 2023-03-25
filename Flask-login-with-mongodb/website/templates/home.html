@@ -1,6 +1,4 @@
-{% extends "base.html" %} {% block title %}Changed{% endblock %}
+{% extends "base.html" %} {% block title %}Home{% endblock %}
 {% block content %}
-{% if current_user.email == "hegdeakarsh2002@gmail.com"%}
-    {{ current_user.email }}
-{% endif %}
+Welcome {{ user['name'] }}
 {% endblock %}
