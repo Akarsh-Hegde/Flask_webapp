@@ -1,0 +1,6 @@
+{% extends "base.html" %} {% block title %}Changed{% endblock %}
+{% block content %}
+{% if current_user.email == "hegdeakarsh2002@gmail.com"%}
+    {{ current_user.email }}
+{% endif %}
+{% endblock %}
