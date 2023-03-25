@@ -54,7 +54,7 @@
           
       </div>
       <br />
-      <button type="submit" class="btn btn-primary">Add Item</button>
+      <input type="submit" name="add" value="Add" class="btn btn-outline btn-success" />
     </form>
 </br>
 <h3 align="center">Market</h3>
@@ -71,12 +71,88 @@
                 <th scope="col">Options</th>
             </tr>
         </thead>
-        <form method="POST">
+        
         <tbody>
             {% for item in items %}
-
+            <form method="POST">
+                <div class="modal fade" id="Modal-EditProduct-{{ item.id }}"
+                         tabindex="-1"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ModalLabel">
+                                <!-- -->
+                                {{ item.name }}
+                                </h5>
+                                    <button type="button" class="close"
+                                        data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-body">Edit Product-
+                            {{ item.name }}
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  id="name"
+                                  name="name"
+                                  placeholder="Enter Product Name"/>
+                              </div>
+                              <div class="form-group">
+                                <label for="barcode">Barcode</label>
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  id="barcode"
+                                  name="barcode"
+                                  placeholder="Enter barcode"/>
+                              </div>
+                              <div class="form-group">
+                                <label for="price">Price </label>
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="price"
+                                  name="price"
+                                  placeholder="Product Price"/>
+                              </div>
+                              <div class="form-group">
+                                <label for="quantity">Quantity </label>
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="quantity"
+                                  name="quantity"
+                                  placeholder="Add quantity"/>
+                              </div>
+                              <div class="form-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Description</span>
+                                  </div>
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  id="description"
+                                  name="description"
+                                  placeholder="Product Description"/>
+                                  
+                              </div>
+                              <br />
+                            </div>
+                                <div class="modal-footer">
+                                    
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <input type="submit" value="Update Purchase" class="btn btn-primary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             <td>{{ item.id }}</td>
             <td>{{ item.name }}</td>
+
             <td>{{ item.barcode }}</td>
             <td>{{ item.price }}$</td>
             <td>{{ item.quantity }}</td>
@@ -84,7 +160,7 @@
             <td>
                 <input type="hidden" name="id" value="{{ item.id }}"/>
                 <input type="submit" name="remove" value="Remove" class="btn btn-secondary"/>
-                <input type="submit" name="buy" value="Edit" class="btn btn-primary"/>
+                <input type="submit" name="edit" value="Edit" class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-EditProduct-{{ item.id }}"/>
             </td>
         </tr>
     {% endfor %}
