@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from . import db
-from .models import User
 from .auth import session
-# from flask_login import login_required, current_user
+from bson import ObjectId
 
 views = Blueprint('views', __name__)
 
@@ -22,49 +21,64 @@ def home():
 
 @views.route('/market', methods=['GET','POST'])
 def market_page():
+    if "_id" in session:
+        user = db.user.find_one({"_id": session["_id"]}) 
+    
+    product = db.product.find()
 
     if request.method == "POST":
+        id = request.form.get('id')
+        item = db.product.find_one({"_id": id}) 
 
-        id = request.form.get('id')   
-        item = Item.query.filter_by(id=id).first()
-        cart = Cart.query.filter_by(user_id=current_user.id, name= item.name).first()
-
+        cart = db.cart.find_one({"user_id": session["_id"], "name": item["pname"]})
+        
         if cart:
-            cart.quantity += 1
-            db.session.commit()
+            cart["quantity"] += 1
+            db.cart.update_one({"_id": cart["_id"]}, {"$set": cart})
             flash('Item updates!', category='success')
             return redirect(url_for("views.cart_page"))
         else:
-            new_cart_item = Cart(name=item.name, barcode=item.barcode, price=item.price, description=item.description, user_id=current_user.id)
-            db.session.add(new_cart_item)
-            db.session.commit()
+            new_cart_item = {
+            "name": item["pname"],
+            "price": item["price"],
+            "description": item["description"],
+            "user_id": session["_id"],
+            "quantity": 1
+            }
+            db.cart.insert_one(new_cart_item)
             flash('Item Purchased!', category='success')
             return redirect(url_for("views.cart_page"))
-
-    items = Item.query.all()
-    return render_template('market.html', user=current_user, items=items)
+        
+        # return render_template('market.html', product=product, user = user)
+    
+    return render_template('market.html', product=product, user = user)
 
 
 @views.route('/cart', methods=['GET','POST'])
 def cart_page():
+    if "_id" in session:
+        user = db.user.find_one({"_id": session["_id"]})
+    cart = db.cart.find()
     if request.method == "POST":
-
-        id = request.form.get('id')   
-        cart_item = Cart.query.filter_by(id=id).first()
+        id = request.form.get('id')
 
         if request.form.get('remove') == 'Remove':
-            db.session.delete(cart_item)
-            db.session.commit()
+            db.cart.delete_one({"_id": ObjectId(id)})
             flash('Item Removed!', category='success')
             return redirect(url_for("views.cart_page"))
+        elif request.form.get('buy') == 'Buy Now':
+            cart_item = db.cart.find_one({"_id": ObjectId(id)})
+            item = db.product.find_one({"pname": cart_item["name"]}) 
+            
+            # db.product.delete_one({"_id": id})
 
-        elif  request.form.get('buy') == 'Buy Now':
+            item["quantity"] -= cart_item["quantity"]
+            db.product.update_one({"_id": item["_id"]}, {"$set": item})
 
-            db.session.delete(cart_item)
-            db.session.commit()
+            db.cart.delete_one({"_id": ObjectId(id)})
             flash('Item Bought!', category='success')
             return redirect(url_for("views.cart_page"))
-    carts = Cart.query.filter(Cart.user_id==current_user.id)
-    return render_template('cart.html', user=current_user, carts=carts)
+
+    return render_template('cart.html', user = user, cart = cart)
 
     

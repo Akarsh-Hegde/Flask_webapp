@@ -1,13 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-
 from . import db
-from .models import User
-from flask_login import login_required, current_user
 
 products = Blueprint('products', __name__)
 
 @products.route('/admin', methods=['GET', 'POST'])
-@login_required
 def admin_page():
     if request.method == "POST":
         name = request.form.get('name')

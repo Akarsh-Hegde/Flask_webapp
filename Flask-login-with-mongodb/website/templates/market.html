@@ -4,13 +4,12 @@
 {% endblock %}
 
 {% block content %}
-      <table class="table table-hover table-dark">
+
+      <table class="table table-hover table-dark" >
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
-                <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Barcode</th>
                 <th scope="col">Price</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Options</th>
@@ -18,9 +17,9 @@
         </thead>
         <tbody>
             <!-- Your rows inside the table HERE: -->
-            {% for item in items %}
+            {% for item in product %}
                 <!-- Modal Description-->
-                <div class="modal fade" id="Modal-MoreInfo-{{ item.id }}"
+                <div class="modal fade" id="Modal-MoreInfo-{{ item['_id'] }}"
                      tabindex="-1"
                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -28,27 +27,22 @@
                         <div class="modal-header">
                             <h5 class="modal-title" id="ModalLabel">
                             <!-- -->
-                            {{ item.name }}
+                            {{ item['pname'] }}
                             </h5>
-                                <button type="button" class="close"
-                                    data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
                         </div>
                         <div class="modal-body">
-                        {{ item.description }}
+                        {{ item['description'] }}
                         </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                data-dismiss="modal">Close
-                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <form method="POST">
                 <!-- Purchase confirmation-->
-                <div class="modal fade" id="Modal-PurchaseConfirm-{{ item.id }}"
+                <div class="modal fade" id="Modal-PurchaseConfirm-{{ item['_id'] }}"
                      tabindex="-1"
                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -56,18 +50,18 @@
                         <div class="modal-header">
                             <h5 class="modal-title" id="ModalLabel">
                             <!-- -->
-                            {{ item.name }}
+                            {{ item['pname'] }}
                             </h5>
-                                <button type="button" class="close"
-                                    data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                         </div>
                         <div class="modal-body">Confirm purchase of - 
-                        {{ item.name }}
+                        {{ item['pname'] }}
                         </div>
                             <div class="modal-footer">
-                                <input type="hidden" name="id" value="{{ item.id }}"/>
+
+                                <input type="hidden" name="id" value="{{ item['_id'] }}"/>
                                 
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <input type="submit" value="Purchase-Add to Cart" class="btn btn-primary"/>
@@ -76,15 +70,13 @@
                     </div>
                 </div>
                 </form>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.barcode }}</td>
-                    <td>{{ item.price }}$</td>
-                    <td>{{ item.quantity }}</td>
-
+                
+                    <td>{{ item['pname'] }}</td>
+                    <td>{{ item['price'] }}$</td>
+                    <td>{{ item['quantity'] }}</td>
                     <td>
-                        <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo-{{ item.id }}">More Info</button>
-                        <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-PurchaseConfirm-{{ item.id }}">Purchase this Item</button>
+                        <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo-{{ item['_id'] }}">More Info</button>
+                        <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-PurchaseConfirm-{{ item['_id'] }}">Purchase this Item</button>
                     </td>
                 </tr>
             {% endfor %}

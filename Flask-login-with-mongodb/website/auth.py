@@ -1,10 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
-
 from . import db
-from .models import User
 from passlib.hash import pbkdf2_sha256
 import uuid
-# from flask_login import login_required, logout_user, current_user, login_user
 
 auth = Blueprint('auth', __name__)
 
@@ -42,13 +39,12 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
         user_login = db.user.find_one({"email": email}) 
         if user_login:
             if pbkdf2_sha256.verify(password, user_login['password1']):
                 flash("Logged in successfully!", category='success')
                 session["_id"] = user_login["_id"]
-                print(session["_id"])
+                # print(session["_id"])
 
                 return redirect(url_for("views.home"))
             else:
@@ -61,6 +57,5 @@ def login():
 
 @auth.route("/logout")
 def logout():
-    # logout_user()
     session.pop("_id", None)
     return redirect(url_for("auth.login"))

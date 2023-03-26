@@ -1,0 +1,7 @@
+.pmnm-right-product-price{
+    display: none;
+}
+
+.single-product .nav-orbtn, .single-product .menu-btn{
+    visibility: visible;
+}
